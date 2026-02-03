@@ -1,16 +1,29 @@
-# This is a sample Python script.
+import pickle
+import pandas as pd
+from sklearn.metrics.pairwise import cosine_similarity
 
-# Press ⌃F5 to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+def build_files():
+    # Load movie data
+    movies = pd.read_csv("tmdb_5000_movies.csv")
+    credits = pd.read_csv("tmdb_5000_credits.csv")
 
+    # Merge datasets
+    movies = movies.merge(credits, on="title")
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press F9 to toggle the breakpoint.
+    # Create movie dictionary (simple version)
+    movie_dict = movies.to_dict()
 
+    # Example similarity (replace with your actual logic if different)
+    similarity = cosine_similarity(
+        movies.select_dtypes(include=["number"]).fillna(0)
+    )
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+    # Save files
+    pickle.dump(movie_dict, open("movie_dict.pkl", "wb"))
+    pickle.dump(similarity, open("similarity.pkl", "wb"))
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    print("PKL files created successfully")
+
+# IMPORTANT: prevent auto execution on import
+if __name__ == "__main__":
+    build_files()
