@@ -5,4 +5,4 @@ myenv/
 venv/
 .venv/
 .DS_Store
-
+*.pkl
