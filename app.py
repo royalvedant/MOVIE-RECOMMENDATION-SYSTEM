@@ -97,11 +97,10 @@ st.markdown(
 
 
 
-
-
 movies_dict=pickle.load(open('movie_dict.pkl','rb'))
 movies=pd.DataFrame(movies_dict)
 similarity= pickle.load(open('similarity.pkl','rb'))
+
 
 #api-8265bd1679663a7ea12ac.168da84d2e8
 #link
