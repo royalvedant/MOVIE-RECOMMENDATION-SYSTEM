@@ -96,10 +96,52 @@ st.markdown(
 
 
 
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
-movies_dict=pickle.load(open('movie_dict.pkl','rb'))
-movies=pd.DataFrame(movies_dict)
-similarity= pickle.load(open('similarity.pkl','rb'))
+@st.cache_data
+def load_and_prepare():
+    movies = pd.read_csv("tmdb_5000_movies.csv")
+    credits = pd.read_csv("tmdb_5000_credits.csv")
+
+    movies = movies.merge(credits, on="title")
+
+    movies = movies[['movie_id','title','overview','genres','keywords','cast','crew']]
+    movies.dropna(inplace=True)
+
+    def convert(text):
+        return " ".join([i['name'] for i in eval(text)])
+
+    movies['genres'] = movies['genres'].apply(convert)
+    movies['keywords'] = movies['keywords'].apply(convert)
+    movies['cast'] = movies['cast'].apply(lambda x: " ".join([i['name'] for i in eval(x)[:3]]))
+    movies['crew'] = movies['crew'].apply(
+        lambda x: " ".join([i['name'] for i in eval(x) if i['job']=='Director'])
+    )
+
+    movies['tags'] = (
+        movies['overview'] + " " +
+        movies['genres'] + " " +
+        movies['keywords'] + " " +
+        movies['cast'] + " " +
+        movies['crew']
+    )
+
+    cv = CountVectorizer(max_features=5000, stop_words='english')
+    vectors = cv.fit_transform(movies['tags']).toarray()
+    similarity = cosine_similarity(vectors)
+
+    return movies, similarity
+
+
+movies, similarity = load_and_prepare()
+
+
+
+
+
+
+
 
 
 #api-8265bd1679663a7ea12ac.168da84d2e8
