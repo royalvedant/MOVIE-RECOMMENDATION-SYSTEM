@@ -1,9 +1,4 @@
-__pycache__/
-*.pyc
-.env
-myenv/
-venv/
-.venv/
-.DS_Store
-
 *.pkl
+myenv/
+.venv/
+__pycache__/
